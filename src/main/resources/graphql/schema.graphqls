@@ -1,0 +1,61 @@
+type Author {
+  id: ID!
+  name: String!
+  age: Int!
+  nationality: String!
+  books: [Book]
+}
+
+type Book {
+  idBook: ID!
+  title: String!
+  publicationYear: Int!
+  language: String!
+  nbPage: Int!
+  author: Author!
+  category: Category
+}
+
+type Category {
+  idC: ID!
+  nameCategory: String!
+  parentCategory: Category
+  subCategories: [Category]
+  books: [Book]
+}
+
+type ListWrapper {
+  list: [Book]!
+  hasMore: Boolean!
+  remainingItems: Int!
+  totalItems: Int!
+  currentPage: Int!
+  pageSize: Int!
+  totalPages: Int!
+}
+
+input InputBook {
+  idBook: ID
+  title: String!
+  publicationYear: Int!
+  language: String!
+  nbPage: Int!
+  idA: ID!   
+  idC: ID    
+}
+
+
+type Mutation {
+  addBook(book: InputBook!): Book!
+}
+
+type Query {
+  authors: [Author]
+ 
+  books(offset: Int, limit: Int): ListWrapper!
+  bookByAuthor(nameOrID: String!, offset: Int, limit: Int): ListWrapper!
+
+  categories: [Category]
+  
+  book(language: String, category: String, year: Int, offset: Int, limit: Int): ListWrapper!
+}
