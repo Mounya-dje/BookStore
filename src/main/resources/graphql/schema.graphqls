@@ -24,10 +24,8 @@ type Category {
   books: [Book]
 }
 
-union SearchResult = Book | Author | Category
-
 type ListWrapper {
-  list: [Book]!
+  list: [SearchResult]!
   hasMore: Boolean!
   remainingItems: Int!
   totalItems: Int!
@@ -46,21 +44,18 @@ input InputBook {
   idC: ID    
 }
 
+union SearchResult = Book | Author | Category
 
 type Mutation {
   addBook(book: InputBook!): Book!
 }
 
 type Query {
-  
   authors: [Author]
- 
-  books(offset: Int, limit: Int): ListWrapper!
-  bookByAuthor(nameOrID: String!, offset: Int, limit: Int): ListWrapper!
-
   categories: [Category]
   
+  books(offset: Int, limit: Int): ListWrapper!
+  bookByAuthor(nameOrID: String!, offset: Int, limit: Int): ListWrapper!
   book(language: String, category: String, year: Int, offset: Int, limit: Int): ListWrapper!
-  
-  search(keyword: String): [SearchResult]
+  search(keyword: String, offset: Int, limit: Int): ListWrapper!
 }

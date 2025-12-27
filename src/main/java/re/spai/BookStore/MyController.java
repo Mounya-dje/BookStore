@@ -120,39 +120,36 @@ public class MyController {
 	    return paginateList(filteredBooks, offset, limit);
 	}
 	
-    // Search using keyword
-	// query (search (keyword: String): [SearchResult]}
-	
-		@QueryMapping
-		public List<Object> search (@Argument String keyword ){
-			List<Book> bookResults = brp.findAll() 
-			     .stream() 
-			     .filter(bk-> bk.getTitle().toLowerCase()
-			    		 .contains(keyword.toLowerCase()))
-			    		 .collect (Collectors.toList());
-			   
-			     List<Author> authorResults =arp.findAll()
-			    		 .stream()
-			    		 .filter(a -> a.getName().toLowerCase()
-			    				 .contains (keyword.toLowerCase()))
-			    		 .collect (Collectors.toList());
-			     
-			     List<Category> categoryResults =crp.findAll()
-			    		 .stream()
-			    		 .filter(c -> c.getNameCategory().toLowerCase()
-			    				 .contains (keyword.toLowerCase()))
-			    		 .collect (Collectors.toList());
-			     
-			     List<Object> combinedResults = new ArrayList<>();
-			     
-			     combinedResults.addAll(bookResults);
-			     combinedResults.addAll(authorResults);
-			     combinedResults.addAll(categoryResults);
-			     
-			     return combinedResults;
-		}
-		
-		
+	@QueryMapping
+	public  ListWrapper search (@Argument String keyword ,
+		    @Argument Integer offset,
+		    @Argument Integer limit){
+		List<Book> bookResults = brp.findAll() 
+		     .stream() 
+		     .filter(bk-> bk.getTitle().toLowerCase()
+		    		 .contains(keyword.toLowerCase()))
+		    		 .collect (Collectors.toList());
+		   
+		     List<Author> authorResults =arp.findAll()
+		    		 .stream()
+		    		 .filter(a -> a.getName().toLowerCase()
+		    				 .contains (keyword.toLowerCase()))
+		    		 .collect (Collectors.toList());
+		     
+		     List<Category> categoryResults =crp.findAll()
+		    		 .stream()
+		    		 .filter(c -> c.getNameCategory().toLowerCase()
+		    				 .contains (keyword.toLowerCase()))
+		    		 .collect (Collectors.toList());
+		     
+		     List<Object> combinedResults = new ArrayList<>();
+		     
+		     combinedResults.addAll(bookResults);
+		     combinedResults.addAll(authorResults);
+		     combinedResults.addAll(categoryResults);
+		     
+		     return paginateList(combinedResults, offset, limit);
+	}
 		
 	
 	private ListWrapper paginateList(List<?> allItems, Integer offset, Integer limit) {
@@ -200,7 +197,7 @@ public class MyController {
   
 	
 	
-	/// wapper class --->
+	/// wapper class 
 	public static class ListWrapper {
 		private final List<Object> list;
 		private final boolean hasMore;
@@ -228,7 +225,7 @@ public class MyController {
 			return remainingItems;
 		}
 		public int getTotalItems() {
-			return totalItems;
+			return totalItems;		
 		}
 		public int getCurrentPage() {
 			return currentPage;
