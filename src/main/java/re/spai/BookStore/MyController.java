@@ -2,14 +2,11 @@ package re.spai.BookStore;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.stream.Collectors;
-
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
-
 
 
 @Controller
@@ -29,12 +26,22 @@ public class MyController {
 		return arp.findAll();
 	}
 	
+	@QueryMapping
+	public Author author(@Argument int id) {
+		return arp.findById(id)
+				.orElseThrow(() -> new RuntimeException("Company not found with id = " + id));
+	}
 	
 	@QueryMapping
 	public List<Category> categories(){
 		return crp.findAll();
 	}
 	
+	@QueryMapping
+	public Category category(@Argument int id) {
+		return crp.findById(id)
+				.orElseThrow(() -> new RuntimeException("Company not found with id = " + id));
+	}
 	
 	//list of books
 	@QueryMapping
@@ -113,8 +120,42 @@ public class MyController {
 	    return paginateList(filteredBooks, offset, limit);
 	}
 	
+    // Search using keyword
+	// query (search (keyword: String): [SearchResult]}
 	
-	private ListWrapper paginateList(List<Book> allItems, Integer offset, Integer limit) {
+		@QueryMapping
+		public List<Object> search (@Argument String keyword ){
+			List<Book> bookResults = brp.findAll() 
+			     .stream() 
+			     .filter(bk-> bk.getTitle().toLowerCase()
+			    		 .contains(keyword.toLowerCase()))
+			    		 .collect (Collectors.toList());
+			   
+			     List<Author> authorResults =arp.findAll()
+			    		 .stream()
+			    		 .filter(a -> a.getName().toLowerCase()
+			    				 .contains (keyword.toLowerCase()))
+			    		 .collect (Collectors.toList());
+			     
+			     List<Category> categoryResults =crp.findAll()
+			    		 .stream()
+			    		 .filter(c -> c.getNameCategory().toLowerCase()
+			    				 .contains (keyword.toLowerCase()))
+			    		 .collect (Collectors.toList());
+			     
+			     List<Object> combinedResults = new ArrayList<>();
+			     
+			     combinedResults.addAll(bookResults);
+			     combinedResults.addAll(authorResults);
+			     combinedResults.addAll(categoryResults);
+			     
+			     return combinedResults;
+		}
+		
+		
+		
+	
+	private ListWrapper paginateList(List<?> allItems, Integer offset, Integer limit) {
 	    int defaultPageSize = 10;
 	    int actualOffset = (offset != null && offset > 0) ? offset : 0;
 	    int actualLimit = (limit != null && limit > 0) ? limit : defaultPageSize;
@@ -123,7 +164,7 @@ public class MyController {
 	    
 	    // Get paginated results (with +1 to check hasMore)
 	    
-	    List<Book> paginated = allItems.stream()
+	    List<?> paginated = allItems.stream()
 	            .skip(actualOffset)  
 	            .limit(actualLimit + 1)  
 	            .collect(Collectors.toList());
@@ -144,7 +185,7 @@ public class MyController {
 	    
 	    // Remove extra book if hasMore
 	    
-	    List<Book> finalList = hasMore ? 
+	    List<?> finalList = hasMore ? 
 	            paginated.subList(0, actualLimit) : paginated;
 	    
 	    return new ListWrapper(
@@ -161,23 +202,23 @@ public class MyController {
 	
 	/// wapper class --->
 	public static class ListWrapper {
-		private final List<Book> list;
+		private final List<Object> list;
 		private final boolean hasMore;
 		private final int remainingItems;    
 		private final int totalItems;        
 		private final int currentPage;       
 		private final int pageSize; 
-		public ListWrapper(List<Book> list, boolean hasMore, int remainingItems, int totalItems, int currentPage,
+		public ListWrapper(List<?> list, boolean hasMore, int remainingItems, int totalItems, int currentPage,
 				int pageSize) {
 			super();
-			this.list = list;
+			this.list = new ArrayList<>(list); 
 			this.hasMore = hasMore;
 			this.remainingItems = remainingItems;
 			this.totalItems = totalItems;
 			this.currentPage = currentPage;
 			this.pageSize = pageSize;
 		}
-		public List<Book> getList() {
+		public List<Object> getList() {
 			return list;
 		}
 		public boolean isHasMore() {

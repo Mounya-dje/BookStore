@@ -24,6 +24,8 @@ type Category {
   books: [Book]
 }
 
+union SearchResult = Book | Author | Category
+
 type ListWrapper {
   list: [Book]!
   hasMore: Boolean!
@@ -40,7 +42,7 @@ input InputBook {
   publicationYear: Int!
   language: String!
   nbPage: Int!
-  idA: ID!   
+  idA: ID  
   idC: ID    
 }
 
@@ -50,6 +52,7 @@ type Mutation {
 }
 
 type Query {
+  
   authors: [Author]
  
   books(offset: Int, limit: Int): ListWrapper!
@@ -58,4 +61,6 @@ type Query {
   categories: [Category]
   
   book(language: String, category: String, year: Int, offset: Int, limit: Int): ListWrapper!
+  
+  search(keyword: String): [SearchResult]
 }

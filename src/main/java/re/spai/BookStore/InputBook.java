@@ -21,6 +21,6 @@ public class InputBook {
 	private  int publicationYear;
 	private String language ;
 	private int nbPage ;
-	private int idA ;
+	private int id ;
 	private int idC ;
 }
