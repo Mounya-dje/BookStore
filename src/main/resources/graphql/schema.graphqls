@@ -48,6 +48,7 @@ union SearchResult = Book | Author | Category
 
 type Mutation {
   addBook(book: InputBook!): Book!
+  deleteAuthor(id: ID!):Boolean
 }
 
 type Query {

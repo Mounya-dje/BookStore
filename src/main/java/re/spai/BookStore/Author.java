@@ -3,6 +3,7 @@ package re.spai.BookStore;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +27,6 @@ public class Author {
 	private int age ;
 	private String nationality ;
 	
-	@OneToMany (mappedBy = "author")
+	@OneToMany (mappedBy = "author", cascade = CascadeType.REMOVE)
 	private List<Book> books;
 }

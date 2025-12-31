@@ -2,10 +2,12 @@ package re.spai.BookStore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 
@@ -150,7 +152,32 @@ public class MyController {
 		     
 		     return paginateList(combinedResults, offset, limit);
 	}
-		
+	
+	
+	//ADD Book	
+	@MutationMapping
+	@PreAuthorize("hasRole('ADMIN')")
+	public Book addBook(@Argument InputBook book) {
+		return brp.save (Book.builder()
+				.title(book.getTitle())
+	            .publicationYear(book.getPublicationYear())
+	            .language(book.getLanguage())
+	            .nbPage(book.getNbPage())
+				.author (author(book.getIdA()))
+				.category (category(book.getIdC()))
+				.build());
+	}
+	
+	// Delete an author
+	@MutationMapping
+	@PreAuthorize("hasRole('ADMIN')")
+	public boolean deleteAuthor (@Argument int id) {
+		Optional<Author> a = arp.findById(id);
+		if (a.isPresent()) arp.deleteById(id);
+		return a.isPresent();
+	}
+	
+	// paginated result with information on the remaining items after this page
 	
 	private ListWrapper paginateList(List<?> allItems, Integer offset, Integer limit) {
 	    int defaultPageSize = 10;
@@ -197,7 +224,7 @@ public class MyController {
   
 	
 	
-	/// wapper class 
+	// wapper class 
 	public static class ListWrapper {
 		private final List<Object> list;
 		private final boolean hasMore;

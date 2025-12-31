@@ -9,18 +9,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class InputBook {
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int idBook ;
-	private String title;
-	private  int publicationYear;
-	private String language ;
-	private int nbPage ;
-	private int id ;
-	private int idC ;
+    private Integer idBook;
+    private String title;
+    private Integer publicationYear;
+    private String language;
+    private Integer nbPage;
+    private Integer idA;
+    private Integer idC;
 }
